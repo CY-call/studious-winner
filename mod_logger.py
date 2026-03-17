@@ -8,7 +8,7 @@
 import os
 import logging
 from datetime import datetime
-from  import LOG_DIR, LOG_FILE_PREFIX, LOG_LEVEL, ENCODING
+from mod_config import LOG_DIR, LOG_FILE_PREFIX, LOG_LEVEL, ENCODING
 
 class Logger:
     def __init__(self):
