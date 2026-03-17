@@ -66,3 +66,7 @@ class Logger:
     def debug(cls, message):
         """记录调试日志"""
         cls.get_logger().debug(message)
+
+
+# 创建全局日志实例
+logger = Logger()
