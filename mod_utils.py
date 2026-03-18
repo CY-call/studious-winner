@@ -1,101 +1,119 @@
-"""通用工具函数模块"""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+通用工具函数模块
+封装文件读写、数据类型转换、路径校验等通用工具方法
+"""
+
 import os
-import json
+import re
 import csv
-from mod_config import Config
-from mod_logger import Logger
+import json
+from datetime import datetime
+from mod_config import PathConfig, FileConfig, get_yaml_config
+from mod_logger import logger
 
 
-class Utils:
-    """工具类"""
+class FileUtils:
+    """文件工具类"""
     
     @staticmethod
     def ensure_directories():
         """确保所有必要的目录存在"""
         try:
-            os.makedirs(Config.INPUT_DIR, exist_ok=True)
-            os.makedirs(Config.OUTPUT_DIR, exist_ok=True)
-            os.makedirs(Config.LOG_DIR, exist_ok=True)
+            os.makedirs(PathConfig.str_input_dir, exist_ok=True)
+            os.makedirs(PathConfig.str_output_dir, exist_ok=True)
+            os.makedirs(PathConfig.str_log_dir, exist_ok=True)
+            logger.info("目录检查完成")
             return True
         except Exception as e:
-            Logger.error(f"创建目录失败: {e}")
+            logger.error(f"创建目录失败: {e}")
             return False
     
     @staticmethod
-    def get_files_in_directory(directory):
+    def get_files_in_directory(str_directory):
         """获取目录下的所有文件"""
         try:
-            files = []
-            for item in os.listdir(directory):
-                item_path = os.path.join(directory, item)
-                if os.path.isfile(item_path):
-                    files.append(item_path)
-            return files
+            lst_files = []
+            for str_item in os.listdir(str_directory):
+                str_item_path = os.path.join(str_directory, str_item)
+                if os.path.isfile(str_item_path):
+                    lst_files.append(str_item_path)
+            return lst_files
         except Exception as e:
-            Logger.error(f"读取目录失败: {e}")
+            logger.error(f"读取目录失败: {e}")
             return []
     
     @staticmethod
-    def is_supported_format(file_path):
+    def is_supported_format(str_file_path):
         """判断文件是否为支持的格式"""
-        ext = os.path.splitext(file_path)[1].lower()
-        return ext in Config.SUPPORTED_FORMATS
+        str_ext = os.path.splitext(str_file_path)[1].lower()
+        return str_ext in FileConfig.lst_supported_formats
     
     @staticmethod
-    def read_csv_file(file_path):
+    def read_csv_file(str_file_path):
         """读取CSV文件"""
         try:
-            data = []
-            with open(file_path, 'r', encoding='utf-8') as f:
-                reader = csv.DictReader(f)
-                for row in reader:
-                    data.append(row)
-            return data
+            lst_data = []
+            with open(str_file_path, 'r', encoding=FileConfig.str_csv_encoding) as f:
+                dict_reader = csv.DictReader(f)
+                for dict_row in dict_reader:
+                    lst_data.append(dict_row)
+            logger.info(f"成功读取CSV文件: {str_file_path}")
+            return lst_data
         except Exception as e:
-            Logger.error(f"读取CSV文件失败 {file_path}: {e}")
+            logger.error(f"读取CSV文件失败 {str_file_path}: {e}")
             return []
     
     @staticmethod
-    def read_json_file(file_path):
+    def read_json_file(str_file_path):
         """读取JSON文件"""
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-            return data
+            with open(str_file_path, 'r', encoding=FileConfig.str_csv_encoding) as f:
+                obj_data = json.load(f)
+            logger.info(f"成功读取JSON文件: {str_file_path}")
+            return obj_data
         except Exception as e:
-            Logger.error(f"读取JSON文件失败 {file_path}: {e}")
+            logger.error(f"读取JSON文件失败 {str_file_path}: {e}")
             return None
     
     @staticmethod
-    def write_file(file_path, content):
+    def write_file(str_file_path, str_content):
         """写入文件"""
         try:
-            with open(file_path, 'w', encoding='utf-8') as f:
-                f.write(content)
+            with open(str_file_path, 'w', encoding='utf-8') as f:
+                f.write(str_content)
+            logger.info(f"成功写入文件: {str_file_path}")
             return True
         except Exception as e:
-            Logger.error(f"写入文件失败 {file_path}: {e}")
+            logger.error(f"写入文件失败 {str_file_path}: {e}")
             return False
     
     @staticmethod
-    def safe_float(value):
-        """安全转换为浮点数"""
+    def read_legacy_file(str_file_path):
+        """读取只读文件legacy.dat"""
         try:
-            return float(value)
-        except (ValueError, TypeError):
+            with open(str_file_path, 'r', encoding='utf-8') as f:
+                str_content = f.read()
+            logger.info(f"成功读取legacy文件: {str_file_path}")
+            return str_content
+        except Exception as e:
+            logger.error(f"读取legacy文件失败 {str_file_path}: {e}")
             return None
+
+
+class DataUtils:
+    """数据工具类"""
     
     @staticmethod
-    def get_file_info(file_path):
-        """获取文件信息"""
-        try:
-            file_name = os.path.basename(file_path)
-            file_size = os.path.getsize(file_path)
-            return {
-                'name': file_name,
-                'path': file_path,
-                'size': file_size
-            }
-        except Exception as e:
-            Logger.error(f"获取文件信息失败 {file_path}: {e}")
-            return None
+    def remove_special_chars(str_content):
+        """移除特殊字符"""
+        dict_config = get_yaml_config()
+        str_special_chars = dict_config['content_filter']['special_chars']
+        str_trans_table = str.maketrans('', '', str_special_chars)
+        return str_content.translate(str_trans_table)
+    
+    @staticmethod
+    def normalize_level(str_level):
+        """标准化日志级别为大写"""
+        return str_level.upper().strip()

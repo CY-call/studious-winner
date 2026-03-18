@@ -1,12 +1,19 @@
-"""日志记录模块"""
-import logging
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+日志记录模块
+实现标准化日志输出功能，支持按指定命名生成日志文件
+"""
+
 import os
+import logging
 from datetime import datetime
-from mod_config import Config
+from mod_config import PathConfig
 
 
 class Logger:
-    """日志类"""
+    """日志记录类"""
+    
     _logger = None
     
     @classmethod
@@ -19,26 +26,23 @@ class Logger:
     @classmethod
     def _setup_logger(cls):
         """设置日志"""
-        logger = logging.getLogger('data_process')
+        logger = logging.getLogger('log_tool')
         logger.setLevel(logging.INFO)
         
-        # 确保日志目录存在
-        os.makedirs(Config.LOG_DIR, exist_ok=True)
+        os.makedirs(PathConfig.str_log_dir, exist_ok=True)
         
-        # 生成日志文件名
-        timestamp = datetime.now().strftime('%Y%m%d')
-        log_file_name = f"{Config.LOG_FILE_PREFIX}{timestamp}{Config.LOG_FILE_EXTENSION}"
-        log_file = os.path.join(Config.LOG_DIR, log_file_name)
+        str_timestamp = datetime.now().strftime('%Y%m%d')
+        str_log_file = os.path.join(
+            PathConfig.str_log_dir,
+            f'mod_process_{str_timestamp}.log'
+        )
         
-        # 文件处理器
-        file_handler = logging.FileHandler(log_file, encoding='utf-8')
+        file_handler = logging.FileHandler(str_log_file, encoding='utf-8')
         file_handler.setLevel(logging.INFO)
         
-        # 控制台处理器
         console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.INFO)
         
-        # 格式化
         formatter = logging.Formatter(
             '%(asctime)s - %(levelname)s - %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S'
@@ -46,28 +50,30 @@ class Logger:
         file_handler.setFormatter(formatter)
         console_handler.setFormatter(formatter)
         
-        # 添加处理器
         logger.addHandler(file_handler)
         logger.addHandler(console_handler)
         
         return logger
     
     @classmethod
-    def info(cls, message):
+    def info(cls, str_message):
         """记录信息日志"""
-        cls.get_logger().info(message)
+        cls.get_logger().info(str_message)
     
     @classmethod
-    def warning(cls, message):
+    def warning(cls, str_message):
         """记录警告日志"""
-        cls.get_logger().warning(message)
+        cls.get_logger().warning(str_message)
     
     @classmethod
-    def error(cls, message):
+    def error(cls, str_message):
         """记录错误日志"""
-        cls.get_logger().error(message)
+        cls.get_logger().error(str_message)
     
     @classmethod
-    def debug(cls, message):
+    def debug(cls, str_message):
         """记录调试日志"""
-        cls.get_logger().debug(message)
+        cls.get_logger().debug(str_message)
+
+
+logger = Logger()
