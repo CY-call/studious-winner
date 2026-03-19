@@ -1,0 +1,28 @@
+2026-03-19 15:44:46 - INFO - ============================================================
+2026-03-19 15:44:46 - INFO - 日志数据处理工具启动
+2026-03-19 15:44:46 - INFO - ============================================================
+2026-03-19 15:44:46 - INFO - 目录检查完成
+2026-03-19 15:44:46 - INFO - 跳过不支持的文件: D:\studious-winner\data\input\legacy.dat
+2026-03-19 15:44:46 - INFO - 开始处理文件: D:\studious-winner\data\input\log_data.csv
+2026-03-19 15:44:46 - INFO - 成功读取CSV文件: D:\studious-winner\data\input\log_data.csv
+2026-03-19 15:44:46 - INFO - 文件 D:\studious-winner\data\input\log_data.csv 校验完成 - 有效: 15, 无效: 0
+2026-03-19 15:44:46 - INFO - 开始处理文件: D:\studious-winner\data\input\log_data.json
+2026-03-19 15:44:46 - INFO - 成功读取JSON文件: D:\studious-winner\data\input\log_data.json
+2026-03-19 15:44:46 - INFO - 文件 D:\studious-winner\data\input\log_data.json 校验完成 - 有效: 10, 无效: 0
+2026-03-19 15:44:46 - INFO - 开始处理文件: D:\studious-winner\data\input\test_data.csv
+2026-03-19 15:44:46 - INFO - 成功读取CSV文件: D:\studious-winner\data\input\test_data.csv
+2026-03-19 15:44:46 - INFO - 文件 D:\studious-winner\data\input\test_data.csv 校验完成 - 有效: 0, 无效: 5
+2026-03-19 15:44:46 - INFO - 开始处理文件: D:\studious-winner\data\input\test_data.json
+2026-03-19 15:44:46 - INFO - 成功读取JSON文件: D:\studious-winner\data\input\test_data.json
+2026-03-19 15:44:46 - INFO - 文件 D:\studious-winner\data\input\test_data.json 校验完成 - 有效: 0, 无效: 5
+2026-03-19 15:44:46 - INFO - 全部文件处理完成 - 有效: 25, 无效: 10
+2026-03-19 15:44:46 - INFO - 按级别统计完成: {'INFO': 12, 'DEBUG': 5, 'WARN': 4, 'ERROR': 3, 'FATAL': 1}
+2026-03-19 15:44:46 - INFO - 按小时统计完成: 9 个时间段
+2026-03-19 15:44:46 - INFO - 关键词提取完成: 10 个关键词
+2026-03-19 15:44:46 - INFO - 全部统计分析完成
+2026-03-19 15:44:46 - INFO - 成功写入文件: D:\studious-winner\build\dist\analysis_report.md
+2026-03-19 15:44:46 - INFO - 成功写入文件: D:\studious-winner\build\dist\summary_stats.json
+2026-03-19 15:44:46 - INFO - 成功写入文件: D:\studious-winner\build\dist\invalid_records.json
+2026-03-19 15:44:46 - INFO - ============================================================
+2026-03-19 15:44:46 - INFO - 日志数据处理工具结束
+2026-03-19 15:44:46 - INFO - ============================================================
