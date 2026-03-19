@@ -1,142 +1,170 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-数据格式验证模块
-负责校验CSV文件列完整性、JSON文件格式合法性
+数据校验模块
+负责校验时间戳格式、日志级别、日志内容
 """
 
-from mod_config import REQUIRED_CSV_COLUMNS
+import re
+from datetime import datetime
+from mod_config import PathConfig, FileConfig, ValidationConfig
 from mod_logger import logger
-from mod_utils import FileUtils, DataUtils
+from mod_utils import FileUtils
 
 
-class DataValidator:
-    """数据验证类"""
+class LogValidator:
+    """日志校验类"""
     
-    @staticmethod
-    def validate_csv(file_path, data):
-        """验证CSV文件
-        
-        参数:
-            file_path: 文件路径
-            data: 数据列表
-        返回值:
-            tuple: (是否有效, 错误信息, 有效数据)
-        """
-        if not data:
-            return False, "文件为空", []
-        
-        # 检查列名
-        first_row = data[0]
-        missing_columns = []
-        for col in REQUIRED_CSV_COLUMNS:
-            if col not in first_row:
-                missing_columns.append(col)
-        
-        if missing_columns:
-            return False, f"缺少必要列: {', '.join(missing_columns)}", []
-        
-        # 验证数据
-        valid_data = []
-        for i, row in enumerate(data):
-            row_data = {}
-            valid = True
-            
-            for col in REQUIRED_CSV_COLUMNS:
-                value = row.get(col)
-                if value is None or str(value).strip() == '':
-                    logger.warning(f"文件 {file_path} 第 {i+1} 行缺少 {col} 字段")
-                    valid = False
-                    break
-                
-                if col == 'value':
-                    float_value = DataUtils.safe_float(value)
-                    if float_value is None:
-                        logger.warning(f"文件 {file_path} 第 {i+1} 行 value 字段不是有效数字: {value}")
-                        valid = False
-                        break
-                    row_data[col] = float_value
-                else:
-                    row_data[col] = str(value).strip()
-            
-            if valid:
-                valid_data.append(row_data)
-        
-        if not valid_data:
-            return False, "没有有效的数据行", []
-        
-        return True, "验证通过", valid_data
+    def __init__(self):
+        """初始化校验器"""
+        self.lst_valid_levels = ValidationConfig.lst_valid_levels
+        self.lst_common_formats = ValidationConfig.lst_common_formats
+        self.str_output_format = ValidationConfig.str_output_format
+        self.str_special_chars = ValidationConfig.str_special_chars
+        self.re_special_chars = re.compile(f'[{re.escape(self.str_special_chars)}]')
     
-    @staticmethod
-    def validate_json(file_path, data):
-        """验证JSON文件
+    def validate_timestamp(self, str_timestamp):
+        """校验并转换时间戳"""
+        if not str_timestamp:
+            return None
         
-        参数:
-            file_path: 文件路径
-            data: 数据对象
-        返回值:
-            tuple: (是否有效, 错误信息, 有效数据)
-        """
-        if data is None:
-            return False, "JSON格式错误", []
+        str_ts = str(str_timestamp).strip()
         
-        # 确保是列表或包含数据的字典
-        if isinstance(data, list):
-            items = data
-        elif isinstance(data, dict):
-            # 尝试找到数据列表
-            if 'data' in data:
-                items = data['data']
-                if not isinstance(items, list):
-                    return False, "JSON中的data字段不是列表", []
-            else:
-                return False, "JSON缺少data字段", []
-        else:
-            return False, "JSON格式不正确，应为列表或包含data字段的字典", []
-        
-        # 验证每个项目
-        valid_data = []
-        for i, item in enumerate(items):
-            if not isinstance(item, dict):
-                logger.warning(f"文件 {file_path} 第 {i+1} 项不是字典")
+        for str_format in self.lst_common_formats:
+            try:
+                dt = datetime.strptime(str_ts, str_format)
+                return dt.strftime(self.str_output_format)
+            except ValueError:
                 continue
-            
-            # 检查必要字段
-            if all(key in item for key in ['id', 'name', 'value']):
-                float_value = DataUtils.safe_float(item['value'])
-                if float_value is not None:
-                    valid_item = {
-                        'id': str(item['id']),
-                        'name': str(item['name']),
-                        'value': float_value
-                    }
-                    valid_data.append(valid_item)
-                else:
-                    logger.warning(f"文件 {file_path} 第 {i+1} 项 value 不是有效数字")
-            else:
-                logger.warning(f"文件 {file_path} 第 {i+1} 项缺少必要字段")
         
-        if not valid_data:
-            return False, "没有有效的数据项", []
-        
-        return True, "验证通过", valid_data
+        return None
     
-    @staticmethod
-    def validate_file(file_path):
-        """验证文件
+    def validate_level(self, str_level):
+        """校验日志级别"""
+        if not str_level:
+            return None
         
-        参数:
-            file_path: 文件路径
-        返回值:
-            tuple: (是否有效, 错误信息, 有效数据)
-        """
-        ext = file_path.lower().split('.')[-1]
+        str_level_upper = str(str_level).strip().upper()
         
-        if ext == 'csv':
-            data = FileUtils.read_csv_file(file_path)
-            return DataValidator.validate_csv(file_path, data)
-        elif ext == 'json':
-            data = FileUtils.read_json_file(file_path)
-            return DataValidator.validate_json(file_path, data)
+        if str_level_upper in self.lst_valid_levels:
+            return str_level_upper
+        
+        return None
+    
+    def validate_content(self, str_content):
+        """校验并清洗日志内容"""
+        if not str_content:
+            return None
+        
+        str_clean = str(str_content).strip()
+        
+        if len(str_clean) < 1:
+            return None
+        
+        str_clean = self.re_special_chars.sub('', str_clean)
+        
+        if len(str_clean) < 1:
+            return None
+        
+        return str_clean
+    
+    def validate_record(self, dict_record, str_file_path, int_line_num):
+        """校验单条记录"""
+        dict_cleaned = {}
+        lst_errors = []
+        
+        str_timestamp = dict_record.get('timestamp', '')
+        str_cleaned_ts = self.validate_timestamp(str_timestamp)
+        if str_cleaned_ts:
+            dict_cleaned['timestamp'] = str_cleaned_ts
         else:
-            return False, "不支持的文件格式", []
+            lst_errors.append(f'时间戳格式无效: {str_timestamp}')
+        
+        str_level = dict_record.get('level', '')
+        str_cleaned_level = self.validate_level(str_level)
+        if str_cleaned_level:
+            dict_cleaned['level'] = str_cleaned_level
+        else:
+            lst_errors.append(f'日志级别无效: {str_level}')
+        
+        str_content = dict_record.get('content', '')
+        str_cleaned_content = self.validate_content(str_content)
+        if str_cleaned_content:
+            dict_cleaned['content'] = str_cleaned_content
+        else:
+            lst_errors.append(f'内容无效: {str_content}')
+        
+        if lst_errors:
+            str_error_msg = '; '.join(lst_errors)
+            logger.warning(f'文件 {str_file_path} 第 {int_line_num} 行校验失败: {str_error_msg}')
+            return False, dict_record, str_error_msg
+        
+        return True, dict_cleaned, ''
+    
+    def validate_file(self, str_file_path):
+        """校验文件"""
+        lst_valid_records = []
+        lst_invalid_records = []
+        
+        str_ext = str_file_path.lower().split('.')[-1]
+        
+        if str_ext == 'csv':
+            lst_data = FileUtils.read_csv_file(str_file_path)
+            if not lst_data:
+                return lst_valid_records, lst_invalid_records
+            
+            dict_first_row = lst_data[0]
+            lst_missing_columns = []
+            for str_col in FileConfig.lst_csv_headers:
+                if str_col not in dict_first_row:
+                    lst_missing_columns.append(str_col)
+            
+            if lst_missing_columns:
+                logger.error(f'文件 {str_file_path} 缺少必要列: {", ".join(lst_missing_columns)}')
+                return lst_valid_records, lst_invalid_records
+            
+            for i, dict_record in enumerate(lst_data, 1):
+                bool_valid, dict_result, str_error = self.validate_record(dict_record, str_file_path, i)
+                if bool_valid:
+                    lst_valid_records.append(dict_result)
+                else:
+                    dict_invalid_record = dict_record.copy()
+                    dict_invalid_record['_error'] = str_error
+                    dict_invalid_record['_file'] = str_file_path
+                    dict_invalid_record['_line'] = i
+                    lst_invalid_records.append(dict_invalid_record)
+        
+        elif str_ext == 'json':
+            obj_data = FileUtils.read_json_file(str_file_path)
+            if obj_data is None:
+                return lst_valid_records, lst_invalid_records
+            
+            if isinstance(obj_data, list):
+                lst_items = obj_data
+            elif isinstance(obj_data, dict):
+                if 'data' in obj_data and isinstance(obj_data['data'], list):
+                    lst_items = obj_data['data']
+                else:
+                    logger.error(f'文件 {str_file_path} JSON格式不正确')
+                    return lst_valid_records, lst_invalid_records
+            else:
+                logger.error(f'文件 {str_file_path} JSON格式不正确')
+                return lst_valid_records, lst_invalid_records
+            
+            for i, dict_record in enumerate(lst_items, 1):
+                if not isinstance(dict_record, dict):
+                    continue
+                
+                bool_valid, dict_result, str_error = self.validate_record(dict_record, str_file_path, i)
+                if bool_valid:
+                    lst_valid_records.append(dict_result)
+                else:
+                    dict_invalid_record = dict_record.copy()
+                    dict_invalid_record['_error'] = str_error
+                    dict_invalid_record['_file'] = str_file_path
+                    dict_invalid_record['_line'] = i
+                    lst_invalid_records.append(dict_invalid_record)
+        
+        logger.info(f"文件 {str_file_path} 校验完成 - 有效: {len(lst_valid_records)}, 无效: {len(lst_invalid_records)}")
+        
+        return lst_valid_records, lst_invalid_records

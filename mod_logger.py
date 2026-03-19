@@ -8,45 +8,51 @@
 import os
 import logging
 from datetime import datetime
-from mod_config import LOG_DIR, LOG_FILE_PREFIX, LOG_LEVEL, ENCODING
+from mod_config import PathConfig
+
 
 class Logger:
-    def __init__(self):
-        # 确保日志目录存在
-        os.makedirs(LOG_DIR, exist_ok=True)
-        
-        # 生成日志文件名
-        today = datetime.now().strftime('%Y%m%d')
-        log_file = os.path.join(LOG_DIR, f'{LOG_FILE_PREFIX}_{today}.log')
-        
-        # 配置日志
-        self.logger = logging.getLogger('data_process')
-        self.logger.setLevel(getattr(logging, LOG_LEVEL))
-        
-        # 避免重复添加处理器
-        if not self.logger.handlers:
-            # 文件处理器
-            file_handler = logging.FileHandler(log_file, encoding=ENCODING)
-            file_handler.setLevel(getattr(logging, LOG_LEVEL))
-            
-            # 控制台处理器
-            console_handler = logging.StreamHandler()
-            console_handler.setLevel(getattr(logging, LOG_LEVEL))
-            
-            # 日志格式
-            formatter = logging.Formatter(
-                '%(asctime)s - %(levelname)s - %(message)s'
-            )
-            file_handler.setFormatter(formatter)
-            console_handler.setFormatter(formatter)
-            
-            # 添加处理器
-            self.logger.addHandler(file_handler)
-            self.logger.addHandler(console_handler)
+    """日志记录类"""
     
-    def get_logger(self):
-        """获取日志对象"""
-        return self.logger
+    def __init__(self):
+        """初始化日志记录器"""
+        os.makedirs(PathConfig.str_log_dir, exist_ok=True)
+        
+        str_today = datetime.now().strftime('%Y%m%d')
+        str_log_file = os.path.join(PathConfig.str_log_dir, f'log_{str_today}.log')
+        
+        self.logger = logging.getLogger('data_process')
+        self.logger.setLevel(logging.INFO)
+        
+        if not self.logger.handlers:
+            obj_file_handler = logging.FileHandler(str_log_file, encoding='utf-8')
+            obj_file_handler.setLevel(logging.INFO)
+            
+            obj_console_handler = logging.StreamHandler()
+            obj_console_handler.setLevel(logging.INFO)
+            
+            str_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+            obj_file_handler.setFormatter(str_formatter)
+            obj_console_handler.setFormatter(str_formatter)
+            
+            self.logger.addHandler(obj_file_handler)
+            self.logger.addHandler(obj_console_handler)
+    
+    def info(self, str_msg):
+        """记录INFO级别日志"""
+        self.logger.info(str_msg)
+    
+    def error(self, str_msg):
+        """记录ERROR级别日志"""
+        self.logger.error(str_msg)
+    
+    def warning(self, str_msg):
+        """记录WARNING级别日志"""
+        self.logger.warning(str_msg)
+    
+    def debug(self, str_msg):
+        """记录DEBUG级别日志"""
+        self.logger.debug(str_msg)
 
-# 创建全局日志实例
-logger = Logger().get_logger()
+
+logger = Logger()

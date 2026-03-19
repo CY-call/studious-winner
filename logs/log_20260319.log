@@ -1,0 +1,67 @@
+2026-03-19 16:21:34,463 - INFO - ============================================================
+2026-03-19 16:21:34,464 - INFO - 数据处理工具启动
+2026-03-19 16:21:34,464 - INFO - ============================================================
+2026-03-19 16:21:34,464 - ERROR - 程序执行出错: type object 'DataProcessor' has no attribute 'process_directory'
+2026-03-19 16:21:34,465 - INFO - ============================================================
+2026-03-19 16:21:34,465 - INFO - 数据处理工具结束
+2026-03-19 16:21:34,465 - INFO - ============================================================
+2026-03-19 16:22:17,752 - INFO - ============================================================
+2026-03-19 16:22:17,752 - INFO - 日志数据处理工具启动
+2026-03-19 16:22:17,752 - INFO - ============================================================
+2026-03-19 16:22:17,754 - INFO - 目录检查完成
+2026-03-19 16:22:17,754 - INFO - 跳过不支持的文件: D:\studious-winner\data\input\legacy.dat
+2026-03-19 16:22:17,754 - INFO - 开始处理文件: D:\studious-winner\data\input\log_data.csv
+2026-03-19 16:22:17,755 - INFO - 成功读取CSV文件: D:\studious-winner\data\input\log_data.csv
+2026-03-19 16:22:17,759 - INFO - 文件 D:\studious-winner\data\input\log_data.csv 校验完成 - 有效: 15, 无效: 0
+2026-03-19 16:22:17,760 - INFO - 开始处理文件: D:\studious-winner\data\input\log_data.json
+2026-03-19 16:22:17,760 - ERROR - 读取JSON文件失败 D:\studious-winner\data\input\log_data.json: type object 'OutputConfig' has no attribute 'str_json_encoding'
+2026-03-19 16:22:17,760 - INFO - 开始处理文件: D:\studious-winner\data\input\test_data.csv
+2026-03-19 16:22:17,760 - INFO - 成功读取CSV文件: D:\studious-winner\data\input\test_data.csv
+2026-03-19 16:22:17,761 - ERROR - 文件 D:\studious-winner\data\input\test_data.csv 缺少必要列: timestamp, level, content
+2026-03-19 16:22:17,761 - INFO - 开始处理文件: D:\studious-winner\data\input\test_data.json
+2026-03-19 16:22:17,761 - ERROR - 读取JSON文件失败 D:\studious-winner\data\input\test_data.json: type object 'OutputConfig' has no attribute 'str_json_encoding'
+2026-03-19 16:22:17,761 - INFO - 全部文件处理完成 - 有效: 15, 无效: 0
+2026-03-19 16:22:17,761 - INFO - 按级别统计完成: {'INFO': 7, 'DEBUG': 3, 'WARN': 2, 'ERROR': 2, 'FATAL': 1}
+2026-03-19 16:22:17,761 - INFO - 按小时统计完成: 9 个时间段
+2026-03-19 16:22:17,764 - INFO - 关键词提取完成: 10 个关键词
+2026-03-19 16:22:17,764 - INFO - 全部统计分析完成
+2026-03-19 16:22:17,764 - ERROR - 写入文件失败 D:\studious-winner\build\dist\analysis_report.md: type object 'OutputConfig' has no attribute 'str_json_encoding'
+2026-03-19 16:22:17,764 - ERROR - 写入文件失败 D:\studious-winner\build\dist\summary_stats.json: type object 'OutputConfig' has no attribute 'str_json_encoding'
+2026-03-19 16:22:17,764 - INFO - ============================================================
+2026-03-19 16:22:17,764 - INFO - 日志数据处理工具结束
+2026-03-19 16:22:17,765 - INFO - ============================================================
+2026-03-19 16:22:17,765 - INFO - 数据处理完成
+2026-03-19 16:22:50,622 - INFO - ============================================================
+2026-03-19 16:22:50,623 - INFO - 日志数据处理工具启动
+2026-03-19 16:22:50,623 - INFO - ============================================================
+2026-03-19 16:22:50,623 - INFO - 目录检查完成
+2026-03-19 16:22:50,624 - INFO - 跳过不支持的文件: D:\studious-winner\data\input\legacy.dat
+2026-03-19 16:22:50,624 - INFO - 开始处理文件: D:\studious-winner\data\input\log_data.csv
+2026-03-19 16:22:50,624 - INFO - 成功读取CSV文件: D:\studious-winner\data\input\log_data.csv
+2026-03-19 16:22:50,630 - INFO - 文件 D:\studious-winner\data\input\log_data.csv 校验完成 - 有效: 15, 无效: 0
+2026-03-19 16:22:50,630 - INFO - 开始处理文件: D:\studious-winner\data\input\log_data.json
+2026-03-19 16:22:50,631 - INFO - 成功读取JSON文件: D:\studious-winner\data\input\log_data.json
+2026-03-19 16:22:50,631 - INFO - 文件 D:\studious-winner\data\input\log_data.json 校验完成 - 有效: 10, 无效: 0
+2026-03-19 16:22:50,631 - INFO - 开始处理文件: D:\studious-winner\data\input\test_data.csv
+2026-03-19 16:22:50,632 - INFO - 成功读取CSV文件: D:\studious-winner\data\input\test_data.csv
+2026-03-19 16:22:50,632 - ERROR - 文件 D:\studious-winner\data\input\test_data.csv 缺少必要列: timestamp, level, content
+2026-03-19 16:22:50,632 - INFO - 开始处理文件: D:\studious-winner\data\input\test_data.json
+2026-03-19 16:22:50,633 - INFO - 成功读取JSON文件: D:\studious-winner\data\input\test_data.json
+2026-03-19 16:22:50,634 - WARNING - 文件 D:\studious-winner\data\input\test_data.json 第 1 行校验失败: 时间戳格式无效: ; 日志级别无效: ; 内容无效: 
+2026-03-19 16:22:50,634 - WARNING - 文件 D:\studious-winner\data\input\test_data.json 第 2 行校验失败: 时间戳格式无效: ; 日志级别无效: ; 内容无效: 
+2026-03-19 16:22:50,634 - WARNING - 文件 D:\studious-winner\data\input\test_data.json 第 3 行校验失败: 时间戳格式无效: ; 日志级别无效: ; 内容无效: 
+2026-03-19 16:22:50,634 - WARNING - 文件 D:\studious-winner\data\input\test_data.json 第 4 行校验失败: 时间戳格式无效: ; 日志级别无效: ; 内容无效: 
+2026-03-19 16:22:50,634 - WARNING - 文件 D:\studious-winner\data\input\test_data.json 第 5 行校验失败: 时间戳格式无效: ; 日志级别无效: ; 内容无效: 
+2026-03-19 16:22:50,634 - INFO - 文件 D:\studious-winner\data\input\test_data.json 校验完成 - 有效: 0, 无效: 5
+2026-03-19 16:22:50,634 - INFO - 全部文件处理完成 - 有效: 25, 无效: 5
+2026-03-19 16:22:50,634 - INFO - 按级别统计完成: {'INFO': 12, 'DEBUG': 5, 'WARN': 4, 'ERROR': 3, 'FATAL': 1}
+2026-03-19 16:22:50,635 - INFO - 按小时统计完成: 9 个时间段
+2026-03-19 16:22:50,636 - INFO - 关键词提取完成: 10 个关键词
+2026-03-19 16:22:50,637 - INFO - 全部统计分析完成
+2026-03-19 16:22:50,638 - INFO - 成功写入文件: D:\studious-winner\build\dist\analysis_report.md
+2026-03-19 16:22:50,638 - INFO - 成功写入文件: D:\studious-winner\build\dist\summary_stats.json
+2026-03-19 16:22:50,640 - INFO - 成功写入文件: D:\studious-winner\build\dist\invalid_records.json
+2026-03-19 16:22:50,640 - INFO - ============================================================
+2026-03-19 16:22:50,640 - INFO - 日志数据处理工具结束
+2026-03-19 16:22:50,640 - INFO - ============================================================
+2026-03-19 16:22:50,640 - INFO - 数据处理完成

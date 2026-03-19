@@ -1,132 +1,42 @@
 [
     {
-        "line": 1,
-        "original": {
-            "id": "1",
-            "name": "Alice",
-            "value": "100.5"
-        },
-        "errors": [
-            "缺少timestamp字段",
-            "缺少level字段",
-            "缺少content字段"
-        ]
+        "id": "1",
+        "name": "Alice",
+        "value": 100.5,
+        "_error": "时间戳格式无效: ; 日志级别无效: ; 内容无效: ",
+        "_file": "D:\\studious-winner\\data\\input\\test_data.json",
+        "_line": 1
     },
     {
-        "line": 2,
-        "original": {
-            "id": "2",
-            "name": "Bob",
-            "value": "200.75"
-        },
-        "errors": [
-            "缺少timestamp字段",
-            "缺少level字段",
-            "缺少content字段"
-        ]
+        "id": "2",
+        "name": "Bob",
+        "value": 200.75,
+        "_error": "时间戳格式无效: ; 日志级别无效: ; 内容无效: ",
+        "_file": "D:\\studious-winner\\data\\input\\test_data.json",
+        "_line": 2
     },
     {
-        "line": 3,
-        "original": {
-            "id": "3",
-            "name": "Charlie",
-            "value": "150.25"
-        },
-        "errors": [
-            "缺少timestamp字段",
-            "缺少level字段",
-            "缺少content字段"
-        ]
+        "id": "3",
+        "name": "Charlie",
+        "value": 150.25,
+        "_error": "时间戳格式无效: ; 日志级别无效: ; 内容无效: ",
+        "_file": "D:\\studious-winner\\data\\input\\test_data.json",
+        "_line": 3
     },
     {
-        "line": 4,
-        "original": {
-            "id": "4",
-            "name": "David",
-            "value": "300.0"
-        },
-        "errors": [
-            "缺少timestamp字段",
-            "缺少level字段",
-            "缺少content字段"
-        ]
+        "id": "4",
+        "name": "David",
+        "value": 300.0,
+        "_error": "时间戳格式无效: ; 日志级别无效: ; 内容无效: ",
+        "_file": "D:\\studious-winner\\data\\input\\test_data.json",
+        "_line": 4
     },
     {
-        "line": 5,
-        "original": {
-            "id": "5",
-            "name": "Eve",
-            "value": "250.5"
-        },
-        "errors": [
-            "缺少timestamp字段",
-            "缺少level字段",
-            "缺少content字段"
-        ]
-    },
-    {
-        "line": 1,
-        "original": {
-            "id": "1",
-            "name": "Alice",
-            "value": 100.5
-        },
-        "errors": [
-            "缺少timestamp字段",
-            "缺少level字段",
-            "缺少content字段"
-        ]
-    },
-    {
-        "line": 2,
-        "original": {
-            "id": "2",
-            "name": "Bob",
-            "value": 200.75
-        },
-        "errors": [
-            "缺少timestamp字段",
-            "缺少level字段",
-            "缺少content字段"
-        ]
-    },
-    {
-        "line": 3,
-        "original": {
-            "id": "3",
-            "name": "Charlie",
-            "value": 150.25
-        },
-        "errors": [
-            "缺少timestamp字段",
-            "缺少level字段",
-            "缺少content字段"
-        ]
-    },
-    {
-        "line": 4,
-        "original": {
-            "id": "4",
-            "name": "David",
-            "value": 300.0
-        },
-        "errors": [
-            "缺少timestamp字段",
-            "缺少level字段",
-            "缺少content字段"
-        ]
-    },
-    {
-        "line": 5,
-        "original": {
-            "id": "5",
-            "name": "Eve",
-            "value": 250.5
-        },
-        "errors": [
-            "缺少timestamp字段",
-            "缺少level字段",
-            "缺少content字段"
-        ]
+        "id": "5",
+        "name": "Eve",
+        "value": 250.5,
+        "_error": "时间戳格式无效: ; 日志级别无效: ; 内容无效: ",
+        "_file": "D:\\studious-winner\\data\\input\\test_data.json",
+        "_line": 5
     }
 ]
