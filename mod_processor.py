@@ -2,167 +2,168 @@
 # -*- coding: utf-8 -*-
 """
 核心数据处理模块
-实现统计分析逻辑，包含数据清洗、求和/平均值/中位数计算、报告内容组装
+实现数据清洗、统计分析、报告生成等核心功能
 """
 
 import os
-from mod_config import Config
+from datetime import datetime
+from mod_config import PathConfig, obj_output_config
 from mod_logger import logger
 from mod_utils import FileUtils
-from mod_validator import DataValidator
-
-
-class StatsAnalyzer:
-    """统计分析类"""
-    
-    @staticmethod
-    def calculate_sum(values):
-        """计算求和"""
-        return sum(values)
-    
-    @staticmethod
-    def calculate_average(values):
-        """计算平均值"""
-        if not values:
-            return 0
-        return sum(values) / len(values)
-    
-    @staticmethod
-    def calculate_median(values):
-        """计算中位数"""
-        if not values:
-            return 0
-        sorted_values = sorted(values)
-        n = len(sorted_values)
-        if n % 2 == 1:
-            return sorted_values[n // 2]
-        else:
-            return (sorted_values[n // 2 - 1] + sorted_values[n // 2]) / 2
-    
-    @staticmethod
-    def analyze_data(data):
-        """分析数据"""
-        values = [item['value'] for item in data]
-        
-        return {
-            'sum': StatsAnalyzer.calculate_sum(values),
-            'average': StatsAnalyzer.calculate_average(values),
-            'median': StatsAnalyzer.calculate_median(values),
-            'count': len(data),
-            'min': min(values) if values else 0,
-            'max': max(values) if values else 0
-        }
+from mod_validator import LogValidator
+from mod_analyzer import DataAnalyzer
 
 
 class ReportGenerator:
-    """报告生成类"""
+    """报告生成类 - 使用PascalCase命名"""
     
     @staticmethod
-    def generate_report(file_info, stats, data_sample):
-        """生成报告内容"""
-        report_lines = []
-        report_lines.append(f"# {file_info['name']} 数据报告")
-        report_lines.append("")
-        report_lines.append("## 文件信息")
-        report_lines.append(f"- 文件名: {file_info['name']}")
-        report_lines.append(f"- 文件大小: {file_info['size']} 字节")
-        report_lines.append(f"- 数据条数: {stats['count']}")
-        report_lines.append("")
+    def generate_markdown_report(dict_stats, lst_invalid_records):
+        """生成Markdown格式分析报告
         
-        report_lines.append("## 统计结果")
-        report_lines.append("| 指标 | 值 |")
-        report_lines.append("|------|----|")
-        report_lines.append(f"| 求和 | {stats['sum']:.2f} |")
-        report_lines.append(f"| 平均值 | {stats['average']:.2f} |")
-        report_lines.append(f"| 中位数 | {stats['median']:.2f} |")
-        report_lines.append(f"| 最小值 | {stats['min']:.2f} |")
-        report_lines.append(f"| 最大值 | {stats['max']:.2f} |")
-        report_lines.append("")
+        参数:
+            dict_stats: 统计数据
+            lst_invalid_records: 无效记录列表
+            
+        返回值:
+            str: Markdown报告内容
+        """
+        lst_lines = []
+        lst_lines.append("# 日志数据分析报告")
+        lst_lines.append("")
+        lst_lines.append(f"**生成时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        lst_lines.append("")
         
-        report_lines.append("## 数据样本")
-        report_lines.append("| ID | Name | Value |")
-        report_lines.append("|----|------|-------|")
+        lst_lines.append("## 1. 总体统计")
+        lst_lines.append(f"- **总记录数**: {dict_stats['total_records']}")
+        lst_lines.append(f"- **无效记录数**: {len(lst_invalid_records)}")
+        lst_lines.append("")
         
-        sample_size = min(5, len(data_sample))
-        for item in data_sample[:sample_size]:
-            report_lines.append(f"| {item['id']} | {item['name']} | {item['value']:.2f} |")
+        lst_lines.append("## 2. 按日志级别统计")
+        lst_lines.append("| 日志级别 | 数量 |")
+        lst_lines.append("|----------|------|")
+        for str_level, int_count in sorted(dict_stats['by_level'].items()):
+            lst_lines.append(f"| {str_level} | {int_count} |")
+        lst_lines.append("")
         
-        if len(data_sample) > sample_size:
-            report_lines.append("| ... | ... | ... |")
+        lst_lines.append("## 3. 按小时统计")
+        lst_lines.append("| 时间段 | 数量 |")
+        lst_lines.append("|--------|------|")
+        for str_hour, int_count in sorted(dict_stats['by_hour'].items()):
+            lst_lines.append(f"| {str_hour} | {int_count} |")
+        lst_lines.append("")
         
-        return '\n'.join(report_lines)
+        lst_lines.append("## 4. Top 10 关键词")
+        lst_lines.append("| 排名 | 关键词 | 出现次数 |")
+        lst_lines.append("|------|--------|----------|")
+        for i, (str_keyword, int_count) in enumerate(dict_stats['top_keywords'], 1):
+            lst_lines.append(f"| {i} | {str_keyword} | {int_count} |")
+        lst_lines.append("")
+        
+        if lst_invalid_records:
+            lst_lines.append("## 5. 无效记录示例 (前5条)")
+            for i, dict_record in enumerate(lst_invalid_records[:5], 1):
+                lst_lines.append(f"### 5.{i} 第 {dict_record.get('_line', 'N/A')} 行")
+                lst_lines.append(f"- **文件**: {dict_record.get('_file', 'N/A')}")
+                lst_lines.append(f"- **错误**: {dict_record.get('_error', 'N/A')}")
+                lst_lines.append("")
+        
+        return '\n'.join(lst_lines)
     
     @staticmethod
-    def save_report(file_path, report_content):
-        """保存报告"""
-        base_name = os.path.splitext(os.path.basename(file_path))[0]
-        report_file = f"{base_name}_report{Config.REPORT_EXTENSION}"
-        report_path = os.path.join(Config.OUTPUT_DIR, report_file)
+    def save_output(dict_stats, lst_invalid_records):
+        """保存所有输出文件
         
-        success = FileUtils.write_file(report_path, report_content)
-        if success:
-            logger.info(f"报告已生成: {report_path}")
-        else:
-            logger.error(f"报告生成失败: {report_path}")
+        参数:
+            dict_stats: 统计数据
+            lst_invalid_records: 无效记录列表
+            
+        返回值:
+            bool: 是否成功
+        """
+        bool_success = True
+        
+        str_markdown_path = os.path.join(PathConfig.str_output_dir, obj_output_config.str_markdown_report)
+        str_markdown_content = ReportGenerator.generate_markdown_report(dict_stats, lst_invalid_records)
+        if not FileUtils.write_file(str_markdown_path, str_markdown_content):
+            bool_success = False
+        
+        str_stats_path = os.path.join(PathConfig.str_output_dir, obj_output_config.str_summary_stats)
+        if not FileUtils.write_json_file(str_stats_path, dict_stats):
+            bool_success = False
+        
+        str_invalid_path = os.path.join(PathConfig.str_output_dir, obj_output_config.str_invalid_records)
+        if not FileUtils.write_json_file(str_invalid_path, lst_invalid_records):
+            bool_success = False
+        
+        return bool_success
 
 
 class DataProcessor:
     """数据处理类"""
     
-    @staticmethod
-    def process_file(file_path):
-        """处理单个文件"""
-        logger.info(f"开始处理文件: {file_path}")
-        
-        is_valid, error_msg, valid_data = DataValidator.validate_file(file_path)
-        
-        if not is_valid:
-            logger.warning(f"文件验证失败 {file_path}: {error_msg}")
-            return False
-        
-        logger.info(f"文件验证通过，有效数据条数: {len(valid_data)}")
-        
-        stats = StatsAnalyzer.analyze_data(valid_data)
-        logger.info(f"统计结果: {stats}")
-        
-        file_info = FileUtils.get_file_info(file_path)
-        if not file_info:
-            logger.error(f"获取文件信息失败: {file_path}")
-            return False
-        
-        report_content = ReportGenerator.generate_report(file_info, stats, valid_data)
-        ReportGenerator.save_report(file_path, report_content)
-        
-        return True
+    def __init__(self):
+        """初始化处理器"""
+        self.obj_validator = LogValidator()
+        self.obj_analyzer = DataAnalyzer()
     
-    @staticmethod
-    def process_directory():
-        """处理目录下的所有文件"""
-        logger.info(f"开始处理目录: {Config.INPUT_DIR}")
+    def process_files(self):
+        """处理所有文件"""
+        logger.info("=" * 60)
+        logger.info("日志数据处理工具启动")
+        logger.info("=" * 60)
         
         if not FileUtils.ensure_directories():
-            logger.error("目录创建失败")
+            logger.error("目录创建失败，程序终止")
             return False
         
-        files = FileUtils.get_files_in_directory(Config.INPUT_DIR)
+        FileUtils.read_legacy_file(PathConfig.str_legacy_file)
         
-        if not files:
-            logger.warning("目录为空")
+        lst_files = FileUtils.get_files_in_directory(PathConfig.str_input_dir)
+        
+        if not lst_files:
+            logger.warning("输入目录为空")
             return False
         
-        processed_count = 0
-        skipped_count = 0
+        lst_all_valid = []
+        lst_all_invalid = []
         
-        for file_path in files:
-            if not FileUtils.is_supported_format(file_path):
-                logger.info(f"跳过不支持的文件: {file_path}")
-                skipped_count += 1
+        for str_file_path in lst_files:
+            if not FileUtils.is_supported_format(str_file_path):
+                logger.info(f"跳过不支持的文件: {str_file_path}")
                 continue
             
-            if DataProcessor.process_file(file_path):
-                processed_count += 1
+            logger.info(f"开始处理文件: {str_file_path}")
+            
+            str_ext = os.path.splitext(str_file_path)[1].lower()
+            
+            if str_ext == '.csv':
+                lst_data = FileUtils.read_csv_file(str_file_path)
+                lst_valid, lst_invalid = self.obj_validator.validate_csv_data(str_file_path, lst_data)
+            elif str_ext == '.json':
+                obj_data = FileUtils.read_json_file(str_file_path)
+                lst_valid, lst_invalid = self.obj_validator.validate_json_data(str_file_path, obj_data)
             else:
-                skipped_count += 1
+                continue
+            
+            lst_all_valid.extend(lst_valid)
+            lst_all_invalid.extend(lst_invalid)
+            logger.info(f"文件 {str_file_path} 校验完成 - 有效: {len(lst_valid)}, 无效: {len(lst_invalid)}")
         
-        logger.info(f"处理完成 - 成功: {processed_count}, 跳过: {skipped_count}")
+        logger.info(f"全部文件处理完成 - 有效: {len(lst_all_valid)}, 无效: {len(lst_all_invalid)}")
+        
+        if not lst_all_valid:
+            logger.warning("没有有效数据可供分析")
+            return False
+        
+        dict_stats = self.obj_analyzer.analyze(lst_all_valid)
+        
+        if not ReportGenerator.save_output(dict_stats, lst_all_invalid):
+            logger.error("输出文件保存失败")
+            return False
+        
+        logger.info("=" * 60)
+        logger.info("日志数据处理工具结束")
+        logger.info("=" * 60)
+        
         return True

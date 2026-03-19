@@ -1,0 +1,54 @@
+{
+  "data": [
+    {
+      "timestamp": "2024-03-18T08:00:00",
+      "level": "INFO",
+      "content": "应用程序启动，版本号v2.1.0"
+    },
+    {
+      "timestamp": "2024-03-18T08:05:30",
+      "level": "DEBUG",
+      "content": "配置文件加载成功，包含15个配置项"
+    },
+    {
+      "timestamp": "2024-03-18T09:00:00",
+      "level": "INFO",
+      "content": "每日任务调度开始执行"
+    },
+    {
+      "timestamp": "2024-03-18T09:30:15",
+      "level": "WARN",
+      "content": "CPU使用率超过75%，当前78%"
+    },
+    {
+      "timestamp": "2024-03-18T10:00:00",
+      "level": "INFO",
+      "content": "数据同步完成，同步记录2000条"
+    },
+    {
+      "timestamp": "2024-03-18T10:30:45",
+      "level": "ERROR",
+      "content": "文件上传失败，文件大小超过限制"
+    },
+    {
+      "timestamp": "2024-03-18T11:00:00",
+      "level": "INFO",
+      "content": "邮件发送成功，收件人admin@example.com"
+    },
+    {
+      "timestamp": "2024-03-18T12:00:00",
+      "level": "DEBUG",
+      "content": "会话超时清理完成，清理会话50个"
+    },
+    {
+      "timestamp": "2024-03-18T13:00:00",
+      "level": "WARN",
+      "content": "网络延迟较高，响应时间500ms"
+    },
+    {
+      "timestamp": "2024-03-18T14:00:00",
+      "level": "INFO",
+      "content": "报表生成完成，报表数量10份"
+    }
+  ]
+}

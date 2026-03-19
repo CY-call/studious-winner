@@ -1,0 +1,80 @@
+# Log Data Cleaning and Analysis Tool Configuration
+# 日志数据清洗与分析工具配置文件
+
+# 合法日志级别
+valid_levels:
+  - DEBUG
+  - INFO
+  - WARN
+  - ERROR
+  - FATAL
+
+# 时间戳配置
+timestamp:
+  iso8601_pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?$'
+  common_formats:
+    - '%Y-%m-%dT%H:%M:%S'
+    - '%Y-%m-%dT%H:%M:%S.%f'
+    - '%Y-%m-%dT%H:%M:%SZ'
+    - '%Y-%m-%d %H:%M:%S'
+    - '%Y/%m/%d %H:%M:%S'
+    - '%d/%m/%Y %H:%M:%S'
+  output_format: '%Y-%m-%dT%H:%M:%S'
+
+# 内容过滤配置
+content:
+  min_length: 1
+  max_length: 1000
+  special_chars: '~!@#$%^&*()_+{}|:<>?`-=[];'',./'
+
+# 文件处理配置
+file:
+  supported_formats:
+    - '.csv'
+    - '.json'
+  csv_encoding: 'utf-8'
+  csv_columns:
+    - 'timestamp'
+    - 'level'
+    - 'content'
+
+# 分析配置
+analysis:
+  top_keywords: 10
+  stop_words:
+    - '的'
+    - '了'
+    - '在'
+    - '是'
+    - '我'
+    - '有'
+    - '和'
+    - '就'
+    - '不'
+    - '人'
+    - '都'
+    - '一'
+    - '一个'
+    - '上'
+    - '也'
+    - '很'
+    - '到'
+    - '说'
+    - '要'
+    - '去'
+    - '你'
+    - '会'
+    - '着'
+    - '没有'
+    - '看'
+    - '好'
+    - '自己'
+    - '这'
+
+# 输出配置
+output:
+  encoding: 'utf-8'
+  json_indent: 4
+  markdown_report: 'analysis_report.md'
+  summary_stats: 'summary_stats.json'
+  invalid_records: 'invalid_records.json'
