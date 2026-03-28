@@ -1,0 +1,31 @@
+# Legacy Log Validation Rules Reference File
+# This file is read-only and used for reference validation rules
+# Do not modify, delete or rename this file
+
+[TIMESTAMP_RULES]
+# Valid timestamp formats
+format_1 = YYYY-MM-DDTHH:MM:SS
+format_2 = YYYY-MM-DD HH:MM:SS
+format_3 = YYYY/MM/DD HH:MM:SS
+
+[LEVEL_RULES]
+# Valid log levels (case-insensitive, will be converted to uppercase)
+valid_levels = DEBUG, INFO, WARN, ERROR, FATAL
+
+[CONTENT_RULES]
+# Content validation rules
+min_length = 1
+max_length = 1000
+special_chars_to_remove = ~!@#$%^&*()_+{}|:<>?`-=[];',./
+
+[STATISTICS_RULES]
+# Statistics calculation rules
+top_keywords_count = 10
+hourly_grouping = true
+level_grouping = true
+
+[OUTPUT_RULES]
+# Output file rules
+report_format = markdown
+stats_format = json
+encoding = utf-8
